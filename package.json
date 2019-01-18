@@ -1,0 +1,49 @@
+{
+  "name": "iobroker.raumfeld",
+  "version": "0.0.1",
+  "description": "ioBroker Adapter to use raumfeld devices",
+  "author": {
+    "name": "jogibear9988",
+    "email": "jochen.kuehner@gmx.de"
+  },
+  "contributors": [
+    {
+      "name": "jogibear9988",
+      "email": "jochen.kuehner@gmx.de"
+    }
+  ],
+  "homepage": "https://github.com/iobroker-community-adapters/ioBroker.raumfeld",
+  "license": "MIT",
+  "keywords": [
+    "ioBroker",
+    "homematic",
+    "cloud"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iobroker-community-adapters/ioBroker.raumfeld"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "dependencies": {
+    "@iobroker/adapter-core": "^1.0.3",
+    "node-raumkernel": "^1.2.22"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "gulp": "^4.0.0",
+    "mocha": "^5.2.0",
+    "@vitalets/google-translate-api": "github:vitalets/google-translate-api",
+    "configstore": "^4.0.0",
+    "axios": "^0.18.0"
+  },
+  "main": "main.js",
+  "scripts": {
+    "test": "node node_modules/mocha/bin/mocha --exit"
+  },
+  "bugs": {
+    "url": "https://github.com/iobroker-community-adapters/ioBroker.raumfeld/issues"
+  },
+  "readmeFilename": "README.md"
+}

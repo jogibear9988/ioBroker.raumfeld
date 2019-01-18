@@ -1,0 +1,71 @@
+{
+    "common": {
+        "name": "raumfeld",
+        "version": "0.0.1",
+        "news": {
+            "0.0.1": {
+                "en": "initial release",
+                "de": "Erstveröffentlichung",
+                "ru": "Первый выпуск",
+                "pt": "lançamento inicial",
+                "nl": "Eerste uitgave",
+                "fr": "Première version",
+                "it": "Versione iniziale",
+                "es": "Versión inicial",
+                "pl": "Pierwsze wydanie",
+                "zh-cn": "初始发行"
+            }
+        },
+        "title": "Raumfeld",
+        "desc": {
+            "en": "Raumfeld"
+        },
+        "authors": [
+            "jogibear9988 <jochen.kuehner@gmx.de>"
+        ],
+        "platform": "Javascript/Node.js",
+        "mode": "daemon",
+        "compact": true,
+        "icon": "teufel.png",
+        "materialize": true,
+        "enabled": true,
+        "extIcon": "https://github.com/iobroker-community-adapters/ioBroker.hmip/master/admin/homematic.png",
+        "keywords": [
+            "hardware",
+            "raumfeld",
+            "teufel",
+            "speaker"
+        ],
+        "readme": "https://github.com/iobroker-community-adapters/ioBroker.hmip/blob/master/README.md",
+        "loglevel": "silly",
+        "type": "hardware",
+        "license": "MIT",
+        "messagebox": true
+    },
+    "native": {
+    },
+    "objects": [],
+    "instanceObjects": [
+        {
+            "_id": "info",
+            "type": "channel",
+            "common": {
+                "name": "Information"
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": "If connected to Cloud",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        }
+    ]
+}

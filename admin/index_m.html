@@ -1,0 +1,94 @@
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="../../lib/css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="../../css/adapter.css" />
+
+    <script type="text/javascript" src="../../lib/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="../../socket.io/socket.io.js"></script>
+
+    <script type="text/javascript" src="../../js/translate.js"></script>
+    <script type="text/javascript" src="../../lib/js/materialize.js"></script>
+    <script type="text/javascript" src="../../js/adapter-settings.js"></script>
+
+    <script type="text/javascript" src="words.js"></script>
+
+    <script type="text/javascript" src="uuid.js"></script>
+    <style>
+        .m .col .select-wrapper+label {
+   top: -26px;  
+  }
+     .m span{
+         font-size: 0.9em;
+     }
+ </style>
+    <script type="text/javascript">
+        // the function loadSettings has to exist ...
+        function load(settings, onChange) {
+            // example: select elements with id=key and class=value and insert value
+            if (!settings) return;
+            if (settings.deviceId === undefined) settings.deviceId = UUID.genV4();
+            $('.value').each(function () {
+                var $key = $(this);
+                var id = $key.attr('id');
+                if ($key.attr('type') === 'checkbox') {
+                    // do not call onChange direct, because onChange could expect some arguments
+                    $key.prop('checked', settings[id]).on('change', function () {
+                        onChange();
+                    });
+                } else {
+                    // do not call onChange direct, because onChange could expect some arguments
+                    $key.val(settings[id]).on('change', function () {
+                        onChange();
+                    }).on('keyup', function () {
+                        onChange();
+                    });
+                }
+            });
+            onChange(false);
+            M.updateTextFields();  // function Materialize.updateTextFields(); to reinitialize all the Materialize labels on the page if you are dynamically adding inputs.
+        }
+
+        // ... and the function save has to exist.
+        // you have to make sure the callback is called with the settings object as first param!
+        function save(callback) {
+            // example: select elements with class=value and build settings object
+            var obj = {};
+            $('.value').each(function () {
+                var $this = $(this);
+                if ($this.attr('type') === 'checkbox') {
+                    obj[$this.attr('id')] = $this.prop('checked');
+                } else {
+                    obj[$this.attr('id')] = $this.val();
+                }
+            });
+            callback(obj);
+        }
+
+        setTimeout(() => sendrequestTokenState(), 2000);
+    </script>
+
+    <style>
+        .sub-title {
+            padding: 0.5rem;
+            background: #2196f3;
+            color: white;
+        }
+    </style>
+
+</head>
+
+<body>
+    <!-- you have to put your config page in a div with id adapter-container -->
+    <div class="m adapter-container">
+        <div class="row">
+            <div class="row">
+                <div class="input-field col s6">
+                    <img src="teufel.png" class="logo">
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
