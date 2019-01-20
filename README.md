@@ -11,6 +11,8 @@
 ## Description
 This adapter allows to control teufel raumfeld devices.
 
+not ready for usage yet!!! 
+
 ## Installation
 This Adapter needs node-js in version >= 8.0
 
