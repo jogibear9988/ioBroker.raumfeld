@@ -44,9 +44,7 @@ class RaumfeldAdapter extends utils.Adapter {
         super({ ...options, name: adapterName });
 
         this.on('unload', this._unload);
-        this.on('objectChange', this._objectChange);
         this.on('stateChange', this._stateChange);
-        this.on('message', this._message);
         this.on('ready', this._ready);
 
         this._unloaded = false;
@@ -61,31 +59,38 @@ class RaumfeldAdapter extends utils.Adapter {
             callback();
         }
     }
-
-    _objectChange(id, obj) {
-        this.log.info('objectChange ' + id + ' ' + JSON.stringify(obj));
-    }
-
-    async _message(msg) {
-        this.log.debug('message recieved - ' + JSON.stringify(msg));
-    }
-
+    
     async _stateChange(id, state) {
         if (!id || !state || state.ack) return;
-        //let o = await this.getObjectAsync(id);
+
+        let o = await this.getObjectAsync(id);
+        if (o.native.parameter) {
+            this.log.info('state change - ' + o.native.parameter + ' - deviceUdn ' + o.native.deviceUdn + ' - value ' + state.val);
+            switch (o.native.parameter) {
+                case 'stop':
+                    let mediaRenderer = raumkernel.managerDisposer.deviceManager.getVirtualMediaRenderer(o.native.deviceUdn);
+                    await mediaRenderer.stop();
+                    break;
+            }
+        }
     }
 
     async _ready() {
         this.log.debug('ready');
+
+        this.setState('info.connection', false, true);
 
         this._raumkernel = new raumkernelLib.Raumkernel();
         this._raumkernel.parmLogger(new MyLogger(this.log));
         this._raumkernel.init();
 
         this._raumkernel.on("deviceListChanged", this._deviceListChanged.bind(this));
-        this._raumkernel.on("systemReady", this._systemReady.bind(this));
+        //this._raumkernel.on("systemReady", this._systemReady.bind(this));
+        this._raumkernel.on("mediaRendererRaumfeldAdded", this._mediaRendererRaumfeldAdded.bind(this));
+        this._raumkernel.on("mediaRendererRaumfeldVirtualAdded", this._mediaRendererRaumfeldVirtualAdded.bind(this));
+        this._raumkernel.on("mediaServerRaumfeldAdded", this._mediaServerRaumfeldAdded.bind(this));
+        this._raumkernel.on("rendererStateChanged", this._rendererStateChanged.bind(this));
 
-        this.setState('info.connection', false, true);
         this.setState('info.connection', true, true);
     }
 
@@ -94,7 +99,26 @@ class RaumfeldAdapter extends utils.Adapter {
     }
 
     _systemReady(ready) {
-        this.log.info(systemReady);
+        this.log.info(ready);
+    }
+
+    async _mediaRendererRaumfeldAdded(deviceUdn, device) {
+        let promises = [];
+        promises.push(this.setObjectNotExistsAsync('devices.' + deviceUdn + '.info.name', { type: 'state', common: { name: 'name', type: 'string', role: 'info', read: true, write: false }, native: {} }));
+        promises.push(this.setObjectNotExistsAsync('devices.' + deviceUdn + '.control.stop', { type: 'state', common: { name: 'stop', type: 'boolean', role: 'button', read: false, write: true }, native: { deviceUdn: deviceUdn, parameter: 'stop' } }));
+        await Promise.all(promises);
+        promises = [];
+        promises.push(this.setStateAsync('devices.' + deviceUdn + '.info.name', device.name(), true));
+        await Promise.all(promises);
+    }
+
+    _mediaRendererRaumfeldVirtualAdded(deviceUdn, device) {
+    }
+
+    _mediaServerRaumfeldAdded(deviceUdn, device) {
+    }
+
+    _rendererStateChanged(mediaRenderer, rendererState) {
     }
 };
 
