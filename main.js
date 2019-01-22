@@ -67,10 +67,41 @@ class RaumfeldAdapter extends utils.Adapter {
         if (o.native.parameter) {
             this.log.info('state change - ' + o.native.parameter + ' - deviceUdn ' + o.native.deviceUdn + ' - value ' + state.val);
             switch (o.native.parameter) {
-                case 'stop':
+                case 'stop': {
                     let mediaRenderer = raumkernel.managerDisposer.deviceManager.getVirtualMediaRenderer(o.native.deviceUdn);
                     await mediaRenderer.stop();
                     break;
+                }
+                case 'play': {
+                    let mediaRenderer = raumkernel.managerDisposer.deviceManager.getVirtualMediaRenderer(o.native.deviceUdn);
+                    await mediaRenderer.play();
+                    break;
+                }
+                case 'pause': {
+                    let mediaRenderer = raumkernel.managerDisposer.deviceManager.getVirtualMediaRenderer(o.native.deviceUdn);
+                    await mediaRenderer.pause();
+                    break;
+                }
+                case 'prev': {
+                    let mediaRenderer = raumkernel.managerDisposer.deviceManager.getVirtualMediaRenderer(o.native.deviceUdn);
+                    await mediaRenderer.prev();
+                    break;
+                }
+                case 'next': {
+                    let mediaRenderer = raumkernel.managerDisposer.deviceManager.getVirtualMediaRenderer(o.native.deviceUdn);
+                    await mediaRenderer.next();
+                    break;
+                }
+                case 'setMute': {
+                    let mediaRenderer = raumkernel.managerDisposer.deviceManager.getVirtualMediaRenderer(o.native.deviceUdn);
+                    await mediaRenderer.setMute(state.val);
+                    break;
+                }
+                case 'setVolume': {
+                    let mediaRenderer = raumkernel.managerDisposer.deviceManager.getVirtualMediaRenderer(o.native.deviceUdn);
+                    await mediaRenderer.setVolume(state.val);
+                    break;
+                }
             }
         }
     }
@@ -117,11 +148,9 @@ class RaumfeldAdapter extends utils.Adapter {
 
     async _mediaRendererRaumfeldVirtualAdded(deviceUdn, device) {
         let promises = [];
-        let name = deviceUdn;
-        if (name.startsWith('uuid:'))
-            name = name.substring(5);
+        let name = this._getNameFromUdn(deviceUdn);
         promises.push(this.setObjectNotExistsAsync('devices.virtual.' + name + '.info.name', { type: 'state', common: { name: 'name', type: 'string', role: 'info', read: true, write: false }, native: {} }));
-        promises.push(this.setObjectNotExistsAsync('devices.virtual.' + name + '.control.stop', { type: 'state', common: { name: 'stop', type: 'boolean', role: 'button', read: false, write: true }, native: { deviceUdn: deviceUdn, parameter: 'stop' } }));
+        promises.push(...this._addMediaRendererControls(deviceUdn, device, 'virtual'));
         await Promise.all(promises);
         promises = [];
         promises.push(this.setStateAsync('devices.virtual.' + name + '.info.name', device.name(), true));
@@ -130,15 +159,33 @@ class RaumfeldAdapter extends utils.Adapter {
 
     async _mediaServerRaumfeldAdded(deviceUdn, device) {
         let promises = [];
-        let name = deviceUdn;
-        if (name.startsWith('uuid:'))
-            name = name.substring(5);
+        let name = this._getNameFromUdn(deviceUdn);
         promises.push(this.setObjectNotExistsAsync('devices.server.' + name + '.info.name', { type: 'state', common: { name: 'name', type: 'string', role: 'info', read: true, write: false }, native: {} }));
-        promises.push(this.setObjectNotExistsAsync('devices.server.' + name + '.control.stop', { type: 'state', common: { name: 'stop', type: 'boolean', role: 'button', read: false, write: true }, native: { deviceUdn: deviceUdn, parameter: 'stop' } }));
+        promises.push(...this._addMediaRendererControls(deviceUdn, device, 'virtual'));
         await Promise.all(promises);
         promises = [];
         promises.push(this.setStateAsync('devices.server.' + name + '.info.name', device.name(), true));
         await Promise.all(promises);
+    }
+
+    _addMediaRendererControls(deviceUdn, device, type) {
+        let promises = [];
+        let name = this._getNameFromUdn(deviceUdn);
+        promises.push(this.setObjectNotExistsAsync('devices.' + type + '.' + name + '.info.name', { type: 'state', common: { name: 'name', type: 'string', role: 'info', read: true, write: false }, native: {} }));
+        promises.push(this.setObjectNotExistsAsync('devices.' + type + '.' + name + '.control.stop', { type: 'state', common: { name: 'stop', type: 'boolean', role: 'button', read: false, write: true }, native: { deviceUdn: deviceUdn, parameter: 'stop' } }));
+        promises.push(this.setObjectNotExistsAsync('devices.' + type + '.' + name + '.control.play', { type: 'state', common: { name: 'play', type: 'boolean', role: 'button', read: false, write: true }, native: { deviceUdn: deviceUdn, parameter: 'play' } }));
+        promises.push(this.setObjectNotExistsAsync('devices.' + type + '.' + name + '.control.pause', { type: 'state', common: { name: 'pause', type: 'boolean', role: 'button', read: false, write: true }, native: { deviceUdn: deviceUdn, parameter: 'pause' } }));
+        promises.push(this.setObjectNotExistsAsync('devices.' + type + '.' + name + '.control.prev', { type: 'state', common: { name: 'prev', type: 'boolean', role: 'button', read: false, write: true }, native: { deviceUdn: deviceUdn, parameter: 'prev' } }));
+        promises.push(this.setObjectNotExistsAsync('devices.' + type + '.' + name + '.control.next', { type: 'state', common: { name: 'next', type: 'boolean', role: 'button', read: false, write: true }, native: { deviceUdn: deviceUdn, parameter: 'next' } }));
+        promises.push(this.setObjectNotExistsAsync('devices.' + type + '.' + name + '.control.setVolume', { type: 'state', common: { name: 'setVolume', type: 'number', role: 'button', read: false, write: true }, native: { deviceUdn: deviceUdn, parameter: 'setVolume' } }));
+        return promises;
+    }
+
+    _getNameFromUdn(deviceUdn) {
+        let name = deviceUdn;
+        if (name.startsWith('uuid:'))
+            name = name.substring(5);
+        return name;
     }
 
     _rendererStateChanged(mediaRenderer, rendererState) {
