@@ -108,7 +108,7 @@ class RaumfeldAdapter extends utils.Adapter {
         if (name.startsWith('uuid:'))
             name = name.substring(5);
         promises.push(this.setObjectNotExistsAsync('devices.renderer.' + name + '.info.name', { type: 'state', common: { name: 'name', type: 'string', role: 'info', read: true, write: false }, native: {} }));
-        promises.push(this.setObjectNotExistsAsync('devices.renderer.' + name + '.control.stop', { type: 'state', common: { name: 'stop', type: 'boolean', role: 'button', read: false, write: true }, native: { deviceUdn: deviceUdn, parameter: 'stop' } }));
+        //promises.push(this.setObjectNotExistsAsync('devices.renderer.' + name + '.control.stop', { type: 'state', common: { name: 'stop', type: 'boolean', role: 'button', read: false, write: true }, native: { deviceUdn: deviceUdn, parameter: 'stop' } }));
         await Promise.all(promises);
         promises = [];
         promises.push(this.setStateAsync('devices.renderer.' + name + '.info.name', device.name(), true));
@@ -142,8 +142,12 @@ class RaumfeldAdapter extends utils.Adapter {
     }
 
     _rendererStateChanged(mediaRenderer, rendererState) {
-        //this.log.silly("_rendererStateChanged - mediaRenderer - " + JSON.stringify(mediaRenderer));
-        this.log.silly("_rendererStateChanged - rendererState - " + JSON.stringify(rendererState));
+        try {
+            //this.log.silly("_rendererStateChanged - mediaRenderer - " + JSON.stringify(mediaRenderer));
+            this.log.silly("_rendererStateChanged - rendererState - " + JSON.stringify(rendererState));
+        } catch (err) {
+            this.log.error("_rendererStateChanged - error - " + err);
+        }
     }
 };
 
