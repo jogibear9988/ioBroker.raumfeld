@@ -59,7 +59,7 @@ class RaumfeldAdapter extends utils.Adapter {
             callback();
         }
     }
-    
+
     async _stateChange(id, state) {
         if (!id || !state || state.ack) return;
 
@@ -104,18 +104,41 @@ class RaumfeldAdapter extends utils.Adapter {
 
     async _mediaRendererRaumfeldAdded(deviceUdn, device) {
         let promises = [];
-        promises.push(this.setObjectNotExistsAsync('devices.' + deviceUdn + '.info.name', { type: 'state', common: { name: 'name', type: 'string', role: 'info', read: true, write: false }, native: {} }));
-        promises.push(this.setObjectNotExistsAsync('devices.' + deviceUdn + '.control.stop', { type: 'state', common: { name: 'stop', type: 'boolean', role: 'button', read: false, write: true }, native: { deviceUdn: deviceUdn, parameter: 'stop' } }));
+        let name = deviceUdn;
+        if (name.startsWith('uuid:'))
+            name = name.substring(5);
+        promises.push(this.setObjectNotExistsAsync('devices.renderers.' + name + '.info.name', { type: 'state', common: { name: 'name', type: 'string', role: 'info', read: true, write: false }, native: {} }));
+        promises.push(this.setObjectNotExistsAsync('devices.renderers.' + name + '.control.stop', { type: 'state', common: { name: 'stop', type: 'boolean', role: 'button', read: false, write: true }, native: { deviceUdn: deviceUdn, parameter: 'stop' } }));
         await Promise.all(promises);
         promises = [];
-        promises.push(this.setStateAsync('devices.' + deviceUdn + '.info.name', device.name(), true));
+        promises.push(this.setStateAsync('devices.renderers.' + name + '.info.name', device.name(), true));
         await Promise.all(promises);
     }
 
     _mediaRendererRaumfeldVirtualAdded(deviceUdn, device) {
+        let promises = [];
+        let name = deviceUdn;
+        if (name.startsWith('uuid:'))
+            name = name.substring(5);
+        promises.push(this.setObjectNotExistsAsync('devices.virtual.' + name + '.info.name', { type: 'state', common: { name: 'name', type: 'string', role: 'info', read: true, write: false }, native: {} }));
+        promises.push(this.setObjectNotExistsAsync('devices.virtual.' + name + '.control.stop', { type: 'state', common: { name: 'stop', type: 'boolean', role: 'button', read: false, write: true }, native: { deviceUdn: deviceUdn, parameter: 'stop' } }));
+        await Promise.all(promises);
+        promises = [];
+        promises.push(this.setStateAsync('devices.virtual.' + name + '.info.name', device.name(), true));
+        await Promise.all(promises);
     }
 
     _mediaServerRaumfeldAdded(deviceUdn, device) {
+        let promises = [];
+        let name = deviceUdn;
+        if (name.startsWith('uuid:'))
+            name = name.substring(5);
+        promises.push(this.setObjectNotExistsAsync('devices.server.' + name + '.info.name', { type: 'state', common: { name: 'name', type: 'string', role: 'info', read: true, write: false }, native: {} }));
+        promises.push(this.setObjectNotExistsAsync('devices.server.' + name + '.control.stop', { type: 'state', common: { name: 'stop', type: 'boolean', role: 'button', read: false, write: true }, native: { deviceUdn: deviceUdn, parameter: 'stop' } }));
+        await Promise.all(promises);
+        promises = [];
+        promises.push(this.setStateAsync('devices.server.' + name + '.info.name', device.name(), true));
+        await Promise.all(promises);
     }
 
     _rendererStateChanged(mediaRenderer, rendererState) {
