@@ -142,7 +142,7 @@ class RaumfeldAdapter extends utils.Adapter {
     }
 
     _rendererStateChanged(mediaRenderer, rendererState) {
-        this.log.silly("_rendererStateChanged - mediaRenderer - " + JSON.stringify(mediaRenderer));
+        //this.log.silly("_rendererStateChanged - mediaRenderer - " + JSON.stringify(mediaRenderer));
         this.log.silly("_rendererStateChanged - rendererState - " + JSON.stringify(rendererState));
     }
 };
