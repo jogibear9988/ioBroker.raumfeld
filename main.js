@@ -139,10 +139,11 @@ class RaumfeldAdapter extends utils.Adapter {
         if (name.startsWith('uuid:'))
             name = name.substring(5);
         promises.push(this.setObjectNotExistsAsync('devices.renderer.' + name + '.info.name', { type: 'state', common: { name: 'name', type: 'string', role: 'info', read: true, write: false }, native: {} }));
-        //promises.push(this.setObjectNotExistsAsync('devices.renderer.' + name + '.control.stop', { type: 'state', common: { name: 'stop', type: 'boolean', role: 'button', read: false, write: true }, native: { deviceUdn: deviceUdn, parameter: 'stop' } }));
+        promises.push(this.setObjectNotExistsAsync('devices.renderer.' + name + '.info.roomName', { type: 'state', common: { name: 'roomName', type: 'string', role: 'info', read: true, write: false }, native: {} }));
         await Promise.all(promises);
         promises = [];
         promises.push(this.setStateAsync('devices.renderer.' + name + '.info.name', device.name(), true));
+        promises.push(this.setStateAsync('devices.renderer.' + name + '.info.roomName', device.roomName(), true));
         await Promise.all(promises);
     }
 
