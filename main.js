@@ -177,7 +177,8 @@ class RaumfeldAdapter extends utils.Adapter {
         promises.push(this.setObjectNotExistsAsync('devices.' + type + '.' + name + '.control.pause', { type: 'state', common: { name: 'pause', type: 'boolean', role: 'button', read: false, write: true }, native: { deviceUdn: deviceUdn, parameter: 'pause' } }));
         promises.push(this.setObjectNotExistsAsync('devices.' + type + '.' + name + '.control.prev', { type: 'state', common: { name: 'prev', type: 'boolean', role: 'button', read: false, write: true }, native: { deviceUdn: deviceUdn, parameter: 'prev' } }));
         promises.push(this.setObjectNotExistsAsync('devices.' + type + '.' + name + '.control.next', { type: 'state', common: { name: 'next', type: 'boolean', role: 'button', read: false, write: true }, native: { deviceUdn: deviceUdn, parameter: 'next' } }));
-        promises.push(this.setObjectNotExistsAsync('devices.' + type + '.' + name + '.control.setVolume', { type: 'state', common: { name: 'setVolume', type: 'number', role: 'button', read: false, write: true }, native: { deviceUdn: deviceUdn, parameter: 'setVolume' } }));
+        promises.push(this.setObjectNotExistsAsync('devices.' + type + '.' + name + '.control.setVolume', { type: 'state', common: { name: 'setVolume', type: 'number', role: 'info', read: false, write: true }, native: { deviceUdn: deviceUdn, parameter: 'setVolume' } }));
+        promises.push(this.setObjectNotExistsAsync('devices.' + type + '.' + name + '.control.setMute', { type: 'state', common: { name: 'setVolume', type: 'number', role: 'info', read: false, write: true }, native: { deviceUdn: deviceUdn, parameter: 'setMute' } }));
         return promises;
     }
 
