@@ -115,7 +115,7 @@ class RaumfeldAdapter extends utils.Adapter {
         await Promise.all(promises);
     }
 
-    _mediaRendererRaumfeldVirtualAdded(deviceUdn, device) {
+    async _mediaRendererRaumfeldVirtualAdded(deviceUdn, device) {
         let promises = [];
         let name = deviceUdn;
         if (name.startsWith('uuid:'))
@@ -128,7 +128,7 @@ class RaumfeldAdapter extends utils.Adapter {
         await Promise.all(promises);
     }
 
-    _mediaServerRaumfeldAdded(deviceUdn, device) {
+    async _mediaServerRaumfeldAdded(deviceUdn, device) {
         let promises = [];
         let name = deviceUdn;
         if (name.startsWith('uuid:'))
