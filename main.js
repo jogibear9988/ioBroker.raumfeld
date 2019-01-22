@@ -151,6 +151,9 @@ class RaumfeldAdapter extends utils.Adapter {
         let promises = [];
         let name = this._getNameFromUdn(deviceUdn);
         promises.push(this.setObjectNotExistsAsync('devices.virtual.' + name + '.info.name', { type: 'state', common: { name: 'name', type: 'string', role: 'info', read: true, write: false }, native: {} }));
+        promises.push(this.setObjectNotExistsAsync('devices.virtual.' + name + '.info.powerState', { type: 'state', common: { name: 'powerState', type: 'string', role: 'info', read: true, write: false }, native: {} }));
+        promises.push(this.setObjectNotExistsAsync('devices.virtual.' + name + '.info.transportState', { type: 'state', common: { name: 'transportState', type: 'string', role: 'info', read: true, write: false }, native: {} }));
+        promises.push(this.setObjectNotExistsAsync('devices.virtual.' + name + '.info.volume', { type: 'state', common: { name: 'volume', type: 'number', role: 'info', read: true, write: false }, native: {} }));
         promises.push(...this._addMediaRendererControls(deviceUdn, device, 'virtual'));
         await Promise.all(promises);
         promises = [];
@@ -190,10 +193,21 @@ class RaumfeldAdapter extends utils.Adapter {
         return name;
     }
 
-    _rendererStateChanged(mediaRenderer, rendererState) {
+    async _rendererStateChanged(mediaRenderer, rendererState) {
+        let promises = [];
         try {
             //this.log.silly("_rendererStateChanged - mediaRenderer - " + JSON.stringify(mediaRenderer));
             this.log.silly("_rendererStateChanged - rendererState - " + JSON.stringify(rendererState));
+
+            for (let i in rendererState.rooms){
+                let room = rendererState.rooms[i];
+                let name = this._getNameFromUdn(room.roomUDN);
+                promises.push(this.setStateAsync('devices.virtual.' + name + '.info.powerState', room.PowerState, true));
+                promises.push(this.setStateAsync('devices.virtual.' + name + '.info.transportState', room.TransportState, true));
+                promises.push(this.setStateAsync('devices.virtual.' + name + '.info.volume', room.Volume, true));
+            }
+
+            return promises;
         } catch (err) {
             this.log.error("_rendererStateChanged - error - " + err);
         }
